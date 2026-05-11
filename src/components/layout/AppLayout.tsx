@@ -5,6 +5,7 @@ import { useApp } from '@/providers/app-provider'
 import { contextEngine } from '@/core/context/context-engine'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import MobileSettingsPanel from '@/components/mobile/MobileSettingsPanel'
 
 const navigation = [
   { id: 'dashboard', name: 'Дашборд', icon: '📊', href: '/dashboard' },
@@ -24,6 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { currentContext, setCurrentContext, user } = useApp()
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [swipeStartX, setSwipeStartX] = useState<number | null>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -297,6 +299,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <span className="text-xl">🔔</span>
               <span className="absolute top-1 right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full border-2 border-white dark:border-gray-900"></span>
             </button>
+            {/* Mobile Settings Button */}
+            {isMobile && (
+              <button
+                onClick={() => setSettingsOpen(true)}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                style={{ minHeight: '44px', minWidth: '44px' }}
+              >
+                <span className="text-xl">⚙️</span>
+              </button>
+            )}
             <button 
               className="hidden md:inline-flex px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all shadow-md"
               style={{ minHeight: '44px' }}
@@ -337,6 +349,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </Link>
         ))}
       </nav>
+
+      {/* Mobile Settings Panel */}
+      {isMobile && settingsOpen && (
+        <MobileSettingsPanel onClose={() => setSettingsOpen(false)} />
+      )}
     </div>
   )
 }
