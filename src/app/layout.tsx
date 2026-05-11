@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import '@/styles/global.css'
+import '@/styles/typography.css'
+import '@/styles/utilities.css'
 import { AppProvider } from '@/providers/app-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
@@ -26,12 +28,24 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning className="scroll-smooth">
+      <head>
+        {/* Preload Inter font for better performance */}
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+          as="style"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        />
+      </head>
       <body className={inter.className}>
         <ErrorBoundary>
           <ThemeProvider>
             <AppProvider>
-              <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+              <div className="min-h-screen bg-[var(--bg-primary)]">
                 {children}
               </div>
             </AppProvider>
