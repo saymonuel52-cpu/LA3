@@ -26,12 +26,6 @@
     "NEXT_PUBLIC_APP_URL": "https://lad2.vercel.app"
   },
   "regions": ["fra1"],
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
