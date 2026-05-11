@@ -1,0 +1,110 @@
+{
+  "aiService": {
+    "provider": "openai",
+    "model": "gpt-4-turbo-preview",
+    "localFallback": "webllm",
+    "maxTokens": 2048,
+    "temperature": 0.7
+  },
+  "actions": [
+    {
+      "id": "parse_text_to_task",
+      "name": "Parse Text to Task",
+      "description": "Convert natural language text into a structured task",
+      "trigger": "text_selection",
+      "inputSchema": {
+        "text": "string",
+        "context": "string"
+      },
+      "outputSchema": {
+        "title": "string",
+        "description": "string",
+        "dueDate": "date",
+        "priority": "low|medium|high",
+        "tags": "string[]"
+      },
+      "promptTemplate": "Convert the following text into a task object: {text}. Context: {context}. Return JSON with title, description, dueDate (ISO), priority, tags."
+    },
+    {
+      "id": "categorize_transaction",
+      "name": "Categorize Transaction",
+      "description": "Automatically categorize a financial transaction",
+      "trigger": "transaction_created",
+      "inputSchema": {
+        "merchant": "string",
+        "amount": "number",
+        "description": "string"
+      },
+      "outputSchema": {
+        "category": "string",
+        "subcategory": "string",
+        "confidence": "number"
+      },
+      "promptTemplate": "Categorize transaction: merchant={merchant}, amount={amount}, description={description}. Return category (e.g., Food, Transportation, Entertainment)."
+    },
+    {
+      "id": "generate_email_reply",
+      "name": "Generate Email Reply",
+      "description": "Generate a professional email reply based on context",
+      "trigger": "email_reply_request",
+      "inputSchema": {
+        "originalEmail": "string",
+        "tone": "professional|casual|friendly",
+        "keyPoints": "string[]"
+      },
+      "outputSchema": {
+        "subject": "string",
+        "body": "string",
+        "suggestedAttachments": "string[]"
+      },
+      "promptTemplate": "Generate email reply to: {originalEmail}. Tone: {tone}. Key points to include: {keyPoints}."
+    },
+    {
+      "id": "summarize_notes",
+      "name": "Summarize Notes",
+      "description": "Create a concise summary of markdown notes",
+      "trigger": "notes_selection",
+      "inputSchema": {
+        "content": "string",
+        "maxLength": "number"
+      },
+      "outputSchema": {
+        "summary": "string",
+        "keyPoints": "string[]",
+        "actionItems": "string[]"
+      },
+      "promptTemplate": "Summarize the following notes in {maxLength} words: {content}. Extract key points and action items."
+    },
+    {
+      "id": "suggest_meeting_agenda",
+      "name": "Suggest Meeting Agenda",
+      "description": "Create a meeting agenda based on participants and topic",
+      "trigger": "calendar_event_created",
+      "inputSchema": {
+        "topic": "string",
+        "participants": "string[]",
+        "duration": "number"
+      },
+      "outputSchema": {
+        "agenda": "string[]",
+        "timeAllocation": "object"
+      },
+      "promptTemplate": "Create a meeting agenda for topic: {topic}, participants: {participants}, duration: {duration} minutes."
+    }
+  ],
+  "ui": {
+    "floatingAssistant": {
+      "position": "bottom-right",
+      "defaultOpen": false,
+      "hotkey": "Ctrl+Space"
+    },
+    "magicButton": {
+      "selector": "[data-magic-button]",
+      "icon": "Sparkles"
+    },
+    "contextMenu": {
+      "enabled": true,
+      "actions": ["summarize", "translate", "improve"]
+    }
+  }
+}

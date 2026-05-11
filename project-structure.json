@@ -1,0 +1,107 @@
+{
+  "project": "LAD 2 - Personal Operating System",
+  "version": "1.0.0",
+  "architecture": {
+    "core_principles": [
+      "Local-First",
+      "Zero-Config Setup",
+      "Context-Aware",
+      "Modular",
+      "AI as an Agent"
+    ],
+    "tech_stack": {
+      "framework": "Next.js 14+ (App Router)",
+      "language": "TypeScript (Strict mode)",
+      "styling": "Tailwind CSS + Radix UI + Framer Motion",
+      "state_management": "Zustand (global) + React Query (server)",
+      "local_db": "Dexie.js (IndexedDB wrapper)",
+      "backend_sync": "Supabase (Postgres + Auth + Realtime)",
+      "ai": "Vercel AI SDK + OpenAI/Claude API + Local WebLLM",
+      "deployment": "Docker (Self-hosted), Vercel, PWA"
+    }
+  },
+  "folder_structure": {
+    "src": {
+      "app": "Next.js App Router pages and layouts",
+      "core": {
+        "auth": "Authentication logic and providers",
+        "context": "Context engine (Home/Work/Study)",
+        "sync-engine": "Local-first sync with CRDT",
+        "event-bus": "Inter-module communication",
+        "module-registry": "Dynamic module loading system",
+        "ai-service": "AI integration layer"
+      },
+      "modules": {
+        "calendar": "Calendar module with events and scheduling",
+        "tasks": "Task management (Todo, Projects)",
+        "finance": "Personal finance and budgeting",
+        "crm": "Contacts and relationship management",
+        "notes": "Markdown notes and documents",
+        "health": "Health tracking and habits",
+        "mail": "Email client integration",
+        "dashboard": "Customizable dashboard widgets"
+      },
+      "lib": {
+        "db": "Database schemas and Dexie setup",
+        "utils": "Shared utilities and helpers",
+        "constants": "App-wide constants",
+        "types": "TypeScript type definitions"
+      },
+      "components": {
+        "ui": "Reusable UI components (Radix based)",
+        "layout": "Layout components (Sidebar, Header)",
+        "modules": "Module-specific components",
+        "ai": "AI assistant UI components"
+      },
+      "stores": "Zustand state stores",
+      "hooks": "Custom React hooks",
+      "styles": "Global styles and Tailwind config"
+    },
+    "public": "Static assets and PWA manifests",
+    "config": {
+      "module-config.json": "Module registry configuration",
+      "context-rules.json": "Context-aware filtering rules",
+      "ai-actions.json": "AI action definitions"
+    },
+    "docker": "Docker configuration for self-hosting",
+    "scripts": "Build and deployment scripts"
+  },
+  "data_layer": {
+    "local_storage": "IndexedDB via Dexie.js",
+    "sync_strategy": "CRDT-based conflict resolution",
+    "encryption": "Client-side encryption for cloud sync",
+    "tables": {
+      "core": ["users", "settings", "modules_config", "activity_log"],
+      "dynamic": "Module-specific tables with context_id and workspace_id"
+    }
+  },
+  "module_system": {
+    "registry": "Central module metadata registry",
+    "dynamic_import": "Lazy loading of activated modules",
+    "isolation": "Each module has own store and components",
+    "event_bus": "Pub/sub for inter-module communication",
+    "permissions": "Module capability declarations"
+  },
+  "context_engine": {
+    "contexts": ["home", "work", "study"],
+    "filtering": "Content visibility based on context",
+    "ai_tuning": "AI behavior adaptation per context"
+  },
+  "ai_integration": {
+    "service_layer": "AI as action service, not just UI",
+    "actions": [
+      "parseTextToTask",
+      "categorizeTransaction",
+      "generateReply",
+      "summarizeContent",
+      "extractEntities"
+    ],
+    "ui_components": ["MagicButton", "FloatingAssistant", "AISuggestions"]
+  },
+  "deployment": {
+    "setup_wizard": "Zero-config installation flow",
+    "modes": ["personal_offline", "team_cloud"],
+    "self_hosted": "Docker Compose with App + Postgres + Redis",
+    "pwa": "Progressive Web App for mobile"
+  }
+}

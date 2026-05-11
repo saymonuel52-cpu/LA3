@@ -1,0 +1,118 @@
+{
+  "$schema": "./module-schema.json",
+  "modules": [
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "version": "1.0.0",
+      "description": "Main dashboard with customizable widgets",
+      "icon": "LayoutDashboard",
+      "route": "/dashboard",
+      "permissions": ["read:widgets", "write:widgets"],
+      "contexts": ["home", "work", "study"],
+      "defaultEnabled": true,
+      "bundle": "/modules/dashboard/bundle.js"
+    },
+    {
+      "id": "tasks",
+      "name": "Tasks",
+      "version": "1.0.0",
+      "description": "Task management with projects and priorities",
+      "icon": "CheckSquare",
+      "route": "/tasks",
+      "permissions": ["read:tasks", "write:tasks", "delete:tasks"],
+      "contexts": ["home", "work", "study"],
+      "defaultEnabled": true,
+      "bundle": "/modules/tasks/bundle.js"
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "version": "1.0.0",
+      "description": "Event scheduling and reminders",
+      "icon": "Calendar",
+      "route": "/calendar",
+      "permissions": ["read:events", "write:events"],
+      "contexts": ["home", "work", "study"],
+      "defaultEnabled": true,
+      "bundle": "/modules/calendar/bundle.js"
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "version": "1.0.0",
+      "description": "Personal budgeting and expense tracking",
+      "icon": "PiggyBank",
+      "route": "/finance",
+      "permissions": ["read:transactions", "write:transactions", "read:budgets"],
+      "contexts": ["home"],
+      "defaultEnabled": false,
+      "bundle": "/modules/finance/bundle.js"
+    },
+    {
+      "id": "crm",
+      "name": "CRM",
+      "version": "1.0.0",
+      "description": "Contact and relationship management",
+      "icon": "Users",
+      "route": "/crm",
+      "permissions": ["read:contacts", "write:contacts", "read:interactions"],
+      "contexts": ["work"],
+      "defaultEnabled": false,
+      "bundle": "/modules/crm/bundle.js"
+    },
+    {
+      "id": "notes",
+      "name": "Notes",
+      "version": "1.0.0",
+      "description": "Markdown notes with AI summarization",
+      "icon": "FileText",
+      "route": "/notes",
+      "permissions": ["read:notes", "write:notes", "delete:notes"],
+      "contexts": ["home", "work", "study"],
+      "defaultEnabled": true,
+      "bundle": "/modules/notes/bundle.js"
+    },
+    {
+      "id": "health",
+      "name": "Health",
+      "version": "1.0.0",
+      "description": "Health tracking and habit formation",
+      "icon": "Heart",
+      "route": "/health",
+      "permissions": ["read:metrics", "write:metrics"],
+      "contexts": ["home"],
+      "defaultEnabled": false,
+      "bundle": "/modules/health/bundle.js"
+    },
+    {
+      "id": "mail",
+      "name": "Mail",
+      "version": "1.0.0",
+      "description": "Email client with AI-powered replies",
+      "icon": "Mail",
+      "route": "/mail",
+      "permissions": ["read:emails", "write:emails", "send:emails"],
+      "contexts": ["work"],
+      "defaultEnabled": false,
+      "bundle": "/modules/mail/bundle.js"
+    }
+  ],
+  "contextRules": {
+    "home": {
+      "visibleModules": ["dashboard", "tasks", "calendar", "finance", "notes", "health"],
+      "defaultModule": "dashboard",
+      "theme": "blue"
+    },
+    "work": {
+      "visibleModules": ["dashboard", "tasks", "calendar", "crm", "mail", "notes"],
+      "defaultModule": "dashboard",
+      "theme": "green"
+    },
+    "study": {
+      "visibleModules": ["dashboard", "tasks", "calendar", "notes"],
+      "defaultModule": "dashboard",
+      "theme": "purple"
+    }
+  }
+}

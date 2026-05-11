@@ -1,0 +1,162 @@
+{
+  "architecture": {
+    "name": "LAD 2 - Personal Operating System",
+    "version": "1.0.0",
+    "description": "Local-first, modular, context-aware personal OS with AI agent capabilities",
+    
+    "core_components": {
+      "local_data_layer": {
+        "description": "Client-side data persistence with optional cloud sync",
+        "technologies": ["IndexedDB", "Dexie.js", "CRDT", "Local Encryption"],
+        "responsibilities": [
+          "Store user data locally",
+          "Handle offline operations",
+          "Sync conflicts resolution",
+          "Data encryption/decryption"
+        ]
+      },
+      
+      "module_system": {
+        "description": "Dynamic plugin architecture for extensibility",
+        "components": {
+          "module_registry": {
+            "purpose": "Register and manage module metadata",
+            "fields": ["id", "name", "version", "icon", "route", "permissions", "contexts", "dependencies"]
+          },
+          "dynamic_loader": {
+            "purpose": "Lazy load module bundles on activation"
+          },
+          "event_bus": {
+            "purpose": "Pub/sub communication between modules",
+            "events": ["module_loaded", "data_changed", "context_switched", "ai_action_requested"]
+          },
+          "sandbox": {
+            "purpose": "Isolate module state and prevent system crashes"
+          }
+        }
+      },
+      
+      "context_engine": {
+        "description": "Adapt UI and functionality based on user context",
+        "contexts": [
+          {
+            "id": "home",
+            "name": "Дом",
+            "description": "Personal life management",
+            "enabled_modules": ["tasks", "finance", "calendar", "health", "notes"],
+            "ai_personality": "casual, helpful"
+          },
+          {
+            "id": "work",
+            "name": "Работа",
+            "description": "Professional productivity",
+            "enabled_modules": ["tasks", "calendar", "crm", "mail", "dashboard"],
+            "ai_personality": "professional, concise"
+          },
+          {
+            "id": "study",
+            "name": "Учеба",
+            "description": "Learning and education",
+            "enabled_modules": ["notes", "tasks", "calendar", "dashboard"],
+            "ai_personality": "educational, encouraging"
+          }
+        ],
+        "switching_mechanism": "Manual toggle + automatic detection (time, location, activity)"
+      },
+      
+      "ai_service_layer": {
+        "description": "AI as an actionable agent, not just chat",
+        "capabilities": {
+          "text_parsing": ["task_creation", "event_extraction", "entity_recognition"],
+          "categorization": ["transaction_category", "contact_tagging", "priority_assignment"],
+          "content_generation": ["email_reply", "document_summary", "meeting_notes"],
+          "automation": ["workflow_suggestion", "routine_optimization"]
+        },
+        "integration_points": ["input_fields", "context_menu", "floating_widget", "scheduled_actions"]
+      }
+    },
+    
+    "data_flow": {
+      "local_first": {
+        "1": "User action triggers local DB write",
+        "2": "Change is logged in activity_log",
+        "3": "If online, sync engine queues for cloud",
+        "4": "Cloud changes are merged using CRDT",
+        "5": "UI updates via reactive stores"
+      },
+      "module_communication": {
+        "1": "Module A emits event via event_bus",
+        "2": "Module B subscribes and reacts",
+        "3": "Data passed through typed payloads",
+        "4": "State updates isolated to module stores"
+      },
+      "ai_workflow": {
+        "1": "User highlights text or clicks 'Magic' button",
+        "2": "Context (current module, data) sent to AI service",
+        "3": "AI processes and returns structured action",
+        "4": "Action executed with user confirmation",
+        "5": "Result saved to appropriate module store"
+      }
+    },
+    
+    "security_model": {
+      "data_privacy": {
+        "local": "Data never leaves device without explicit consent",
+        "encryption": "Client-side encryption before cloud sync",
+        "permissions": "Granular module-level data access controls"
+      },
+      "authentication": {
+        "modes": ["local_pin", "biometric", "oauth_cloud"],
+        "sessions": "JWT tokens with refresh rotation"
+      }
+    },
+    
+    "performance_considerations": {
+      "bundle_optimization": "Module code splitting, tree shaking",
+      "local_db": "IndexedDB indexing for fast queries",
+      "caching": "React Query for server data, Zustand for client state",
+      "offline": "Service Worker for PWA capabilities"
+    },
+    
+    "deployment_scenarios": {
+      "personal_offline": {
+        "setup": "Single executable/installer",
+        "requirements": "No internet, local storage only",
+        "updates": "Manual app updates"
+      },
+      "team_cloud": {
+        "setup": "Shared workspace with user management",
+        "requirements": "Supabase backend, realtime sync",
+        "updates": "Automatic via cloud"
+      },
+      "self_hosted": {
+        "setup": "Docker Compose deployment",
+        "components": ["app", "postgres", "redis", "nginx"],
+        "management": "Admin dashboard for configuration"
+      }
+    }
+  },
+  
+  "module_specifications": {
+    "calendar": {
+      "description": "Event scheduling with AI-powered suggestions",
+      "data_model": ["events", "recurring_patterns", "reminders", "attendees"],
+      "ai_integration": "Natural language event creation, conflict detection"
+    },
+    "tasks": {
+      "description": "Todo lists, projects, and productivity tracking",
+      "data_model": ["tasks", "projects", "tags", "time_estimates"],
+      "ai_integration": "Auto-prioritization, deadline suggestions, breakdown"
+    },
+    "finance": {
+      "description": "Budgeting, expense tracking, and financial insights",
+      "data_model": ["accounts", "transactions", "categories", "budgets"],
+      "ai_integration": "Spending pattern analysis, category prediction"
+    },
+    "crm": {
+      "description": "Contact management and relationship tracking",
+      "data_model": ["contacts", "interactions", "deals", "notes"],
+      "ai_integration": "Interaction suggestions, follow-up reminders"
+    }
+  }
+}
