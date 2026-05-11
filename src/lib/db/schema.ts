@@ -79,6 +79,7 @@ export interface Task {
   created_at: string;
   updated_at: string;
   sync_version: number; // For CRDT conflict resolution
+  isDemo: boolean; // Маркер демо-данных
 }
 
 export interface CalendarEvent {
@@ -99,6 +100,7 @@ export interface CalendarEvent {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo: boolean; // Маркер демо-данных
 }
 
 export interface Transaction {
@@ -120,6 +122,7 @@ export interface Transaction {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo: boolean; // Маркер демо-данных
 }
 
 export interface Note {
@@ -136,6 +139,7 @@ export interface Note {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo?: boolean; // Маркер демо-данных
 }
 
 export interface Contact {
@@ -154,6 +158,7 @@ export interface Contact {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo?: boolean; // Маркер демо-данных
 }
 
 // Appointments module
@@ -170,6 +175,7 @@ export interface Procedure {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo?: boolean; // Маркер демо-данных
 }
 
 export interface Appointment {
@@ -188,6 +194,7 @@ export interface Appointment {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo?: boolean; // Маркер демо-данных
 }
 
 export interface Client {
@@ -206,6 +213,7 @@ export interface Client {
   created_at: string;
   updated_at: string;
   sync_version: number;
+  isDemo?: boolean; // Маркер демо-данных
 }
 
 // AI-specific tables

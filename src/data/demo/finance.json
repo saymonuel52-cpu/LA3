@@ -1,0 +1,64 @@
+{
+  "transactions": [
+    {
+      "id": "tx-1",
+      "merchant": "Супермаркет Перекрёсток",
+      "amount": 2500,
+      "currency": "RUB",
+      "category": "Продукты",
+      "subcategory": "Еда",
+      "date": "2024-12-15",
+      "is_income": false,
+      "tags": ["дом", "продукты"],
+      "isDemo": true
+    },
+    {
+      "id": "tx-2",
+      "merchant": "Зарплата",
+      "amount": 85000,
+      "currency": "RUB",
+      "category": "Доход",
+      "subcategory": "Зарплата",
+      "date": "2024-12-10",
+      "is_income": true,
+      "tags": ["доход"],
+      "isDemo": true
+    },
+    {
+      "id": "tx-3",
+      "merchant": "МТС",
+      "amount": 1200,
+      "currency": "RUB",
+      "category": "Связь",
+      "subcategory": "Мобильная связь",
+      "date": "2024-12-12",
+      "is_income": false,
+      "tags": ["коммуналка", "связь"],
+      "isDemo": true
+    },
+    {
+      "id": "tx-4",
+      "merchant": "Яндекс.Такси",
+      "amount": 450,
+      "currency": "RUB",
+      "category": "Транспорт",
+      "subcategory": "Такси",
+      "date": "2024-12-14",
+      "is_income": false,
+      "tags": ["транспорт"],
+      "isDemo": true
+    },
+    {
+      "id": "tx-5",
+      "merchant": "Фриланс проект",
+      "amount": 15000,
+      "currency": "RUB",
+      "category": "Доход",
+      "subcategory": "Фриланс",
+      "date": "2024-12-13",
+      "is_income": true,
+      "tags": ["доход", "фриланс"],
+      "isDemo": true
+    }
+  ]
+}

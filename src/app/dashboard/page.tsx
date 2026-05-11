@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import ProtectedLayout from '@/components/layout/ProtectedLayout'
 import { useApp } from '@/providers/app-provider'
-import { moduleRegistry } from '@/core/module-registry/module-registry'
+import { useDashboardData } from '@/hooks/useDashboardData'
 import Link from 'next/link'
 
 const modules = [
@@ -18,6 +19,8 @@ const modules = [
 
 function DashboardContent() {
   const { currentContext } = useApp()
+  const [dataMode, setDataMode] = useState<'demo' | 'real' | 'empty'>('demo')
+  const { stats, recentActivity, modules: moduleConfig, contexts, isLoading } = useDashboardData(dataMode)
   
   const contextConfig = {
     home: { name: 'Дом', visibleModules: ['dashboard', 'tasks', 'calendar', 'finance', 'notes', 'health'] },
@@ -28,6 +31,14 @@ function DashboardContent() {
   const visibleModules = modules.filter(m => 
     contextConfig?.visibleModules.includes(m.id)
   )
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-xl text-gray-600">Загрузка данных...</div>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -40,31 +51,43 @@ function DashboardContent() {
         </p>
       </div>
 
+      {/* Mode Selector */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        {(['demo', 'real', 'empty'] as const).map((mode) => (
+          <button
+            key={mode}
+            onClick={() => setDataMode(mode)}
+            className={`px-4 py-2 rounded-lg border transition-colors ${
+              dataMode === mode
+                ? 'bg-blue-500 text-white border-blue-500'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            {mode === 'demo' && 'Демо-данные'}
+            {mode === 'real' && 'Реальные данные'}
+            {mode === 'empty' && 'Пустой режим'}
+          </button>
+        ))}
+      </div>
+
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <div className="text-3xl mb-2">📋</div>
-          <div className="text-2xl font-bold text-gray-900">12</div>
-          <div className="text-sm text-gray-600">Активных задач</div>
-        </div>
+        {stats.map((stat) => (
+          <div key={stat.id} className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+            <div className="text-3xl mb-2">{stat.icon}</div>
+            <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+            <div className="text-sm text-gray-600">{stat.title}</div>
+            {stat.trend && (
+              <div className="text-xs text-green-600 mt-1">{stat.trend} {stat.description}</div>
+            )}
+          </div>
+        ))}
         
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <div className="text-3xl mb-2">📅</div>
-          <div className="text-2xl font-bold text-gray-900">5</div>
-          <div className="text-sm text-gray-600">Событий сегодня</div>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <div className="text-3xl mb-2">💰</div>
-          <div className="text-2xl font-bold text-gray-900">₽45K</div>
-          <div className="text-sm text-gray-600">Расходы за месяц</div>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <div className="text-3xl mb-2">✅</div>
-          <div className="text-2xl font-bold text-gray-900">85%</div>
-          <div className="text-sm text-gray-600">Продуктивность</div>
-        </div>
+        {stats.length === 0 && (
+          <div className="col-span-full text-center py-8 text-gray-500">
+            Нет данных для отображения. Переключитесь в режим демо или добавьте реальные данные.
+          </div>
+        )}
       </div>
 
       {/* Modules Grid */}
@@ -91,32 +114,22 @@ function DashboardContent() {
       <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Недавняя активность</h2>
         <div className="space-y-4">
-          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <span className="text-2xl">✅</span>
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">Задача выполнена</div>
-              <div className="text-sm text-gray-600">Завершена задача "Подготовить отчёт"</div>
+          {recentActivity.map((activity) => (
+            <div key={activity.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+              <span className="text-2xl">{activity.icon}</span>
+              <div className="flex-1">
+                <div className="font-medium text-gray-900">{activity.title}</div>
+                <div className="text-sm text-gray-600">{activity.description}</div>
+              </div>
+              <span className="text-sm text-gray-500">{activity.timestamp}</span>
             </div>
-            <span className="text-sm text-gray-500">2 часа назад</span>
-          </div>
+          ))}
           
-          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <span className="text-2xl">📧</span>
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">Новое письмо</div>
-              <div className="text-sm text-gray-600">Получено письмо от Иван Иванов</div>
+          {recentActivity.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              Нет недавней активности.
             </div>
-            <span className="text-sm text-gray-500">4 часа назад</span>
-          </div>
-          
-          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <span className="text-2xl">📅</span>
-            <div className="flex-1">
-              <div className="font-medium text-gray-900">Событие в календаре</div>
-              <div className="text-sm text-gray-600">Встреча с командой в 15:00</div>
-            </div>
-            <span className="text-sm text-gray-500">Завтра</span>
-          </div>
+          )}
         </div>
       </div>
     </div>

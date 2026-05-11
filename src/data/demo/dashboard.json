@@ -1,0 +1,163 @@
+{
+  "stats": [
+    {
+      "id": "tasks",
+      "title": "Активных задач",
+      "value": 12,
+      "icon": "📋",
+      "trend": "+2",
+      "description": "Задачи в работе"
+    },
+    {
+      "id": "events",
+      "title": "Событий сегодня",
+      "value": 5,
+      "icon": "📅",
+      "trend": "-1",
+      "description": "Запланированные события"
+    },
+    {
+      "id": "finance",
+      "title": "Расходы за месяц",
+      "value": "₽45K",
+      "icon": "💰",
+      "trend": "+8%",
+      "description": "По сравнению с прошлым месяцем"
+    },
+    {
+      "id": "productivity",
+      "title": "Продуктивность",
+      "value": "85%",
+      "icon": "✅",
+      "trend": "+5%",
+      "description": "Эффективность за неделю"
+    }
+  ],
+  "recentActivity": [
+    {
+      "id": "activity-1",
+      "type": "task_completed",
+      "title": "Задача выполнена",
+      "description": "Завершена задача \"Подготовить отчёт\"",
+      "icon": "✅",
+      "timestamp": "2 часа назад",
+      "module": "tasks"
+    },
+    {
+      "id": "activity-2",
+      "type": "new_email",
+      "title": "Новое письмо",
+      "description": "Получено письмо от Иван Иванов",
+      "icon": "📧",
+      "timestamp": "4 часа назад",
+      "module": "mail"
+    },
+    {
+      "id": "activity-3",
+      "type": "calendar_event",
+      "title": "Событие в календаре",
+      "description": "Встреча с командой в 15:00",
+      "icon": "📅",
+      "timestamp": "Завтра",
+      "module": "calendar"
+    },
+    {
+      "id": "activity-4",
+      "type": "finance_transaction",
+      "title": "Новая транзакция",
+      "description": "Оплата за интернет ₽1,200",
+      "icon": "💰",
+      "timestamp": "Сегодня, 10:30",
+      "module": "finance"
+    },
+    {
+      "id": "activity-5",
+      "type": "note_created",
+      "title": "Создана заметка",
+      "description": "Заметка \"Идеи для проекта\"",
+      "icon": "📝",
+      "timestamp": "Вчера, 18:45",
+      "module": "notes"
+    }
+  ],
+  "modules": [
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "icon": "📊",
+      "color": "bg-blue-500",
+      "href": "/dashboard",
+      "description": "Обзорная панель"
+    },
+    {
+      "id": "tasks",
+      "name": "Задачи",
+      "icon": "✅",
+      "color": "bg-green-500",
+      "href": "/tasks",
+      "description": "Управление задачами"
+    },
+    {
+      "id": "calendar",
+      "name": "Календарь",
+      "icon": "📅",
+      "color": "bg-purple-500",
+      "href": "/calendar",
+      "description": "Планирование событий"
+    },
+    {
+      "id": "finance",
+      "name": "Финансы",
+      "icon": "💰",
+      "color": "bg-emerald-500",
+      "href": "/finance",
+      "description": "Учёт расходов и доходов"
+    },
+    {
+      "id": "crm",
+      "name": "CRM",
+      "icon": "👥",
+      "color": "bg-amber-500",
+      "href": "/crm",
+      "description": "Управление контактами"
+    },
+    {
+      "id": "notes",
+      "name": "Заметки",
+      "icon": "📝",
+      "color": "bg-pink-500",
+      "href": "/notes",
+      "description": "Заметки и идеи"
+    },
+    {
+      "id": "health",
+      "name": "Здоровье",
+      "icon": "❤️",
+      "color": "bg-red-500",
+      "href": "/health",
+      "description": "Трекер здоровья"
+    },
+    {
+      "id": "mail",
+      "name": "Почта",
+      "icon": "📧",
+      "color": "bg-indigo-500",
+      "href": "/mail",
+      "description": "Электронная почта"
+    }
+  ],
+  "contexts": {
+    "home": {
+      "name": "Дом",
+      "visibleModules": ["dashboard", "tasks", "calendar", "finance", "notes", "health"]
+    },
+    "work": {
+      "name": "Работа",
+      "visibleModules": ["dashboard", "tasks", "calendar", "crm", "mail", "notes"]
+    },
+    "study": {
+      "name": "Учеба",
+      "visibleModules": ["dashboard", "tasks", "calendar", "notes"]
+    }
+  }
+}

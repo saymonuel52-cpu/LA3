@@ -1,0 +1,54 @@
+{
+  "tasks": [
+    {
+      "id": "task-1",
+      "title": "Подготовить отчёт за квартал",
+      "description": "Собрать все данные и создать презентацию",
+      "status": "in_progress",
+      "priority": "high",
+      "due_date": "2024-12-20",
+      "tags": ["работа", "отчётность"],
+      "isDemo": true
+    },
+    {
+      "id": "task-2",
+      "title": "Записаться к врачу",
+      "description": "Профилактический осмотр",
+      "status": "todo",
+      "priority": "medium",
+      "due_date": "2024-12-25",
+      "tags": ["здоровье"],
+      "isDemo": true
+    },
+    {
+      "id": "task-3",
+      "title": "Купить продукты",
+      "description": "Список: молоко, хлеб, яйца",
+      "status": "done",
+      "priority": "low",
+      "due_date": "2024-12-15",
+      "tags": ["дом", "покупки"],
+      "isDemo": true
+    },
+    {
+      "id": "task-4",
+      "title": "Завершить проект",
+      "description": "Финальная сборка и тестирование",
+      "status": "in_progress",
+      "priority": "urgent",
+      "due_date": "2024-12-18",
+      "tags": ["работа", "проект"],
+      "isDemo": true
+    },
+    {
+      "id": "task-5",
+      "title": "Позвонить родителям",
+      "description": "Обновиться по семейным вопросам",
+      "status": "todo",
+      "priority": "medium",
+      "due_date": "2024-12-17",
+      "tags": ["семья"],
+      "isDemo": true
+    }
+  ]
+}
