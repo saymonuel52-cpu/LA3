@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { db } from '@/lib/db/database'
+import EmptyState from '@/components/common/EmptyState'
 
 export interface Task {
   id: string
@@ -91,7 +92,6 @@ export default function TasksModule() {
     setSwipedTaskId(null)
   }
 
-  // Touch handlers for swipe actions
   const handleTouchStart = (e: React.TouchEvent, taskId: string) => {
     touchStartX.current = e.touches[0].clientX
     setSwipedTaskId(taskId)
@@ -101,7 +101,6 @@ export default function TasksModule() {
     const currentX = e.touches[0].clientX
     const diff = currentX - touchStartX.current
     
-    // Prevent scrolling when swiping task
     if (Math.abs(diff) > 10) {
       e.preventDefault()
     }
@@ -111,15 +110,12 @@ export default function TasksModule() {
     const currentX = e.changedTouches[0].clientX
     const diff = currentX - touchStartX.current
     
-    // Swipe left to delete (> 80px)
     if (diff < -80) {
       deleteTask(taskId)
     }
-    // Swipe right to complete (> 80px)
     else if (diff > 80) {
       updateTaskStatus(taskId, 'done')
     }
-    // Reset
     else {
       setSwipedTaskId(null)
     }
@@ -143,27 +139,27 @@ export default function TasksModule() {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="card">
-          <div className="text-2xl font-bold">{stats.total}</div>
+        <div className="stats-card">
+          <div className="stats-number">{stats.total}</div>
           <div className="text-sm text-secondary">Всего задач</div>
         </div>
-        <div className="card">
-          <div className="text-2xl font-bold text-blue-600">{stats.todo}</div>
+        <div className="stats-card">
+          <div className="stats-number text-blue-600">{stats.todo}</div>
           <div className="text-sm text-secondary">К выполнению</div>
         </div>
-        <div className="card">
-          <div className="text-2xl font-bold text-yellow-600">{stats.inProgress}</div>
+        <div className="stats-card">
+          <div className="stats-number text-yellow-600">{stats.inProgress}</div>
           <div className="text-sm text-secondary">В процессе</div>
         </div>
-        <div className="card">
-          <div className="text-2xl font-bold text-green-600">{stats.done}</div>
+        <div className="stats-card">
+          <div className="stats-number text-green-600">{stats.done}</div>
           <div className="text-sm text-secondary">Выполнено</div>
         </div>
       </div>
 
       {/* Add Task Form */}
       <div className="card">
-        <h2 className="text-lg font-semibold mb-4">Добавить задачу</h2>
+        <h2 className="text-lg font-semibold mb-4 dark:text-white">Добавить задачу</h2>
         <div className="space-y-4">
           <div>
             <input
@@ -198,6 +194,9 @@ export default function TasksModule() {
             <button
               onClick={addTask}
               className="btn btn-primary"
+              style={{
+                background: 'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
+              }}
             >
               Добавить
             </button>
@@ -216,6 +215,9 @@ export default function TasksModule() {
                 ? 'btn-primary'
                 : 'btn-secondary'
             }`}
+            style={filter === f ? {
+              background: 'linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%)',
+            } : {}}
           >
             {f === 'all' && 'Все'}
             {f === 'active' && 'Активные'}
@@ -232,9 +234,16 @@ export default function TasksModule() {
           <div className="skeleton h-16 rounded-lg"></div>
         </div>
       ) : filteredTasks.length === 0 ? (
-        <div className="card text-center py-8 text-secondary">
-          Задач нет
-        </div>
+        <EmptyState
+          icon="✅"
+          title="Задач пока нет"
+          description="Создайте первую задачу, чтобы начать продуктивно работать"
+          actionLabel="Создать задачу"
+          onAction={() => {
+            const titleInput = document.querySelector('input[placeholder="Название задачи"]') as HTMLInputElement
+            titleInput?.focus()
+          }}
+        />
       ) : (
         <div className="space-y-3">
           {filteredTasks.map((task) => {
@@ -242,7 +251,6 @@ export default function TasksModule() {
             return (
               <div
                 key={task.id}
-                // @ts-ignore
                 ref={el => { taskRefs.current[task.id] = el }}
                 className="list-item relative overflow-hidden"
                 style={{
@@ -255,17 +263,14 @@ export default function TasksModule() {
                 onTouchMove={(e) => handleTouchMove(e, task.id)}
                 onTouchEnd={(e) => handleTouchEnd(e, task.id)}
               >
-                {/* Swipe Left Action (Delete) */}
                 <div className="list-item-swipe-left absolute inset-0 z-0">
                   <span>Удалить</span>
                 </div>
 
-                {/* Swipe Right Action (Complete) */}
                 <div className="list-item-swipe-right absolute inset-0 z-0">
                   <span>Завершить</span>
                 </div>
 
-                {/* Content */}
                 <div className="list-item-content relative z-10 p-4">
                   <div className="flex items-start gap-4">
                     <input
@@ -278,7 +283,7 @@ export default function TasksModule() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between flex-wrap gap-2">
                         <div>
-                          <h3 className={`font-medium ${task.status === 'done' ? 'line-through text-secondary' : ''}`}>
+                          <h3 className={`font-medium ${task.status === 'done' ? 'line-through text-secondary' : ''} dark:text-white`}>
                             {task.title}
                           </h3>
                           {task.description && (
@@ -286,9 +291,9 @@ export default function TasksModule() {
                           )}
                           <div className="flex items-center gap-2 mt-2 flex-wrap">
                             <span className={`text-xs px-2 py-1 rounded-full ${
-                              task.priority === 'high' ? 'bg-red-100 text-red-700' :
-                              task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-green-100 text-green-700'
+                              task.priority === 'high' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300' :
+                              task.priority === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                              'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
                             }`}>
                               {task.priority === 'high' && 'Высокий'}
                               {task.priority === 'medium' && 'Средний'}
@@ -328,7 +333,6 @@ export default function TasksModule() {
         </div>
       )}
 
-      {/* Mobile Swipe Hint */}
       <div className="md:hidden text-center text-sm text-secondary mt-4">
         💡 Свайпните влево для удаления, вправо для завершения
       </div>
