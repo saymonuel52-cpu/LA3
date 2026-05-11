@@ -1,16 +1,12 @@
 'use client'
 
 import ProtectedLayout from '@/components/layout/ProtectedLayout'
+import CalendarModule from '@/modules/calendar/CalendarModule'
 
 export default function CalendarPage() {
   return (
     <ProtectedLayout>
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Календарь</h1>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <p className="text-gray-600">Модуль календаря в разработке...</p>
-        </div>
-      </div>
+      <CalendarModule />
     </ProtectedLayout>
   )
 }

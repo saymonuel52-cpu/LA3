@@ -10,32 +10,34 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.0",
+    "@tanstack/react-query": "^5.0.0",
+    "ai": "^4.0.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "dexie": "^4.0.0",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.300.0",
     "next": "14.x",
     "react": "18.x",
     "react-dom": "18.x",
-    "dexie": "^4.0.0",
-    "zustand": "^4.5.0",
-    "@tanstack/react-query": "^5.0.0",
-    "ai": "^4.0.0",
-    "framer-motion": "^11.0.0",
-    "@radix-ui/react-slot": "^1.0.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.0",
     "tailwind-merge": "^2.2.0",
-    "lucide-react": "^0.300.0"
+    "uuid": "^14.0.0",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
-    "typescript": "5.x",
     "@types/node": "20.x",
     "@types/react": "18.x",
     "@types/react-dom": "18.x",
-    "tailwindcss": "3.x",
-    "postcss": "8.x",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "10.x",
+    "concurrently": "^8.2.0",
     "eslint": "8.x",
     "eslint-config-next": "14.x",
-    "concurrently": "^8.2.0",
     "husky": "^9.0.0",
-    "lint-staged": "^15.2.0"
+    "lint-staged": "^15.2.0",
+    "postcss": "8.x",
+    "tailwindcss": "3.x",
+    "typescript": "5.x"
   }
 }
