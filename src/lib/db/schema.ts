@@ -156,6 +156,58 @@ export interface Contact {
   sync_version: number;
 }
 
+// Appointments module
+export interface Procedure {
+  id: string;
+  user_id: string;
+  workspace_id: string;
+  name: string;
+  description?: string;
+  duration_minutes: number;
+  price: number;
+  category: string;
+  color: string;
+  created_at: string;
+  updated_at: string;
+  sync_version: number;
+}
+
+export interface Appointment {
+  id: string;
+  user_id: string;
+  workspace_id: string;
+  client_id: string;
+  procedure_id: string;
+  date: string;
+  time: string;
+  duration_minutes: number;
+  price: number;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  notes?: string;
+  reminder_sent: boolean;
+  created_at: string;
+  updated_at: string;
+  sync_version: number;
+}
+
+export interface Client {
+  id: string;
+  user_id: string;
+  workspace_id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  notes?: string;
+  total_visits: number;
+  total_spent: number;
+  last_visit?: string;
+  next_appointment?: string;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+  sync_version: number;
+}
+
 // AI-specific tables
 export interface AIActionLog {
   id: string;
@@ -209,6 +261,11 @@ export const dexieSchema = {
   transactions: 'id, user_id, workspace_id, date, category, [user_id+workspace_id]',
   notes: 'id, user_id, workspace_id, is_pinned, last_edited, [user_id+workspace_id]',
   contacts: 'id, user_id, workspace_id, name, tags, [user_id+workspace_id]',
+  
+  // Appointments module
+  procedures: 'id, user_id, workspace_id, category, [user_id+workspace_id]',
+  appointments: 'id, user_id, workspace_id, date, time, status, client_id, [user_id+workspace_id]',
+  clients: 'id, user_id, workspace_id, name, phone, [user_id+workspace_id]',
   
   // AI tables
   ai_action_logs: 'id, user_id, timestamp, action_id',

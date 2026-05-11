@@ -12,12 +12,13 @@ const navigation = [
   { id: 'calendar', name: 'Календарь', icon: '📅', href: '/calendar' },
   { id: 'finance', name: 'Финансы', icon: '💰', href: '/finance' },
   { id: 'crm', name: 'CRM', icon: '👥', href: '/crm' },
+  { id: 'appointments', name: 'Записи', icon: '📋', href: '/appointments' },
   { id: 'notes', name: 'Заметки', icon: '📝', href: '/notes' },
   { id: 'health', name: 'Здоровье', icon: '❤️', href: '/health' },
   { id: 'mail', name: 'Почта', icon: '📧', href: '/mail' },
 ]
 
-const mobileNavItems = ['dashboard', 'tasks', 'calendar', 'finance', 'crm']
+const mobileNavItems = ['dashboard', 'tasks', 'calendar', 'finance', 'appointments']
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { currentContext, setCurrentContext, user } = useApp()

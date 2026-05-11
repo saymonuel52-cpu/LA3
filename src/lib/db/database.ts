@@ -15,6 +15,9 @@ import type {
   Transaction,
   Note,
   Contact,
+  Procedure,
+  Appointment,
+  Client,
   AIActionLog,
   AIPromptTemplate,
   SyncMetadata,
@@ -34,6 +37,11 @@ export class LADDatabase extends Dexie {
   transactions!: Table<Transaction, string>;
   notes!: Table<Note, string>;
   contacts!: Table<Contact, string>;
+  
+  // Appointments module
+  procedures!: Table<Procedure, string>;
+  appointments!: Table<Appointment, string>;
+  clients!: Table<Client, string>;
   
   // AI tables
   aiActionLogs!: Table<AIActionLog, string>;
@@ -59,6 +67,11 @@ export class LADDatabase extends Dexie {
       transactions: 'id, user_id, workspace_id, date, category, [user_id+workspace_id]',
       notes: 'id, user_id, workspace_id, is_pinned, last_edited, [user_id+workspace_id]',
       contacts: 'id, user_id, workspace_id, name, tags, [user_id+workspace_id]',
+      
+      // Appointments module
+      procedures: 'id, user_id, workspace_id, category, [user_id+workspace_id]',
+      appointments: 'id, user_id, workspace_id, date, time, status, client_id, [user_id+workspace_id]',
+      clients: 'id, user_id, workspace_id, name, phone, [user_id+workspace_id]',
       
       // AI tables
       aiActionLogs: 'id, user_id, timestamp, action_id',
