@@ -8,6 +8,7 @@ import financeDemo from '@/data/demo/finance.json'
 import { db } from '@/lib/db/database'
 import { Task, CalendarEvent, Transaction } from '@/lib/db/schema'
 import { useDashboardStore } from '@/stores/dashboard-store'
+import { useUserStore } from '@/stores/user-store'
 
 export type DataMode = 'demo' | 'real'
 
@@ -49,6 +50,11 @@ export interface DashboardData {
  * - Демо-данные показываются ТОЛЬКО если пользователь не авторизован ИЛИ не прошел онбординг
  * - После регистрации/онбординга автоматически переключается на реальные данные
  * - В настройках нет переключателя режимов — только кнопка сброса данных
+ * 
+ * Интеграция с auth:
+ * - Слушает изменения в auth store
+ * - При auth.status === 'authenticated' переключает на real mode
+ * - При онбординге очищает демо-данные
  */
 export function useDashboardData(): DashboardData {
   const [data, setData] = useState<DashboardData>({
@@ -63,7 +69,31 @@ export function useDashboardData(): DashboardData {
     mode: 'real'
   })
 
-  const { dataMode, setDataMode } = useDashboardStore()
+  const { dataMode, setDataMode, switchToRealMode, switchToDemoMode } = useDashboardStore()
+  const { clearDemoMode } = useUserStore()
+  
+  // TODO: Импортировать auth store когда будет реализован
+  // import { useAuthStore } from '@/stores/auth-store'
+  // const { isAuthenticated, hasCompletedOnboarding } = useAuthStore()
+  
+  // Временная заглушка для демонстрации
+  const isAuthenticated = false
+  const hasCompletedOnboarding = false
+
+  // Эффект для синхронизации с auth state
+  useEffect(() => {
+    // Проверяем авторизацию и онбординг
+    const shouldUseDemo = !isAuthenticated || !hasCompletedOnboarding
+    
+    if (shouldUseDemo && dataMode !== 'demo') {
+      // Включаем демо-режим
+      switchToDemoMode()
+    } else if (!shouldUseDemo && dataMode !== 'real') {
+      // Переключаемся на реальные данные
+      switchToRealMode()
+      clearDemoMode()
+    }
+  }, [isAuthenticated, hasCompletedOnboarding, dataMode, switchToRealMode, switchToDemoMode, clearDemoMode])
 
   useEffect(() => {
     const loadData = async () => {
@@ -71,11 +101,6 @@ export function useDashboardData(): DashboardData {
 
       try {
         // Проверяем авторизацию и онбординг
-        // В реальной реализации здесь будет проверка из auth store
-        const isAuthenticated = false // TODO: Получить из auth store
-        const hasCompletedOnboarding = false // TODO: Получить из auth store
-
-        // Если пользователь не авторизован ИЛИ не прошел онбординг — используем демо
         const shouldUseDemo = !isAuthenticated || !hasCompletedOnboarding
 
         if (shouldUseDemo) {
@@ -202,7 +227,7 @@ export function useDashboardData(): DashboardData {
     }
 
     loadData()
-  }, [])
+  }, [isAuthenticated, hasCompletedOnboarding, dataMode])
 
   return data
 }
