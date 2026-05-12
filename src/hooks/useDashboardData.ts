@@ -9,6 +9,7 @@ import { db } from '@/lib/db/database'
 import { Task, CalendarEvent, Transaction } from '@/lib/db/schema'
 import { useDashboardStore } from '@/stores/dashboard-store'
 import { useUserStore } from '@/stores/user-store'
+import { useAuthStore } from '@/stores/auth-store'
 
 export type DataMode = 'demo' | 'real'
 
@@ -72,13 +73,8 @@ export function useDashboardData(): DashboardData {
   const { dataMode, setDataMode, switchToRealMode, switchToDemoMode } = useDashboardStore()
   const { clearDemoMode } = useUserStore()
   
-  // TODO: Импортировать auth store когда будет реализован
-  // import { useAuthStore } from '@/stores/auth-store'
-  // const { isAuthenticated, hasCompletedOnboarding } = useAuthStore()
-  
-  // Временная заглушка для демонстрации
-  const isAuthenticated = false
-  const hasCompletedOnboarding = false
+  // Получаем состояние авторизации из auth store
+  const { isAuthenticated, hasCompletedOnboarding } = useAuthStore()
 
   // Эффект для синхронизации с auth state
   useEffect(() => {

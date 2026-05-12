@@ -6,12 +6,14 @@ import Link from 'next/link'
 import AppLayout from '@/components/layout/AppLayout'
 import { useDashboardStore } from '@/stores/dashboard-store'
 import { useUserStore } from '@/stores/user-store'
+import { useAuthStore } from '@/stores/auth-store'
 import { getBonusModulesOnRegistration } from '@/lib/module-catalog'
 
 export default function RegisterPage() {
   const router = useRouter()
   const { switchToRealMode } = useDashboardStore()
   const { addUnlockedModule } = useUserStore()
+  const { setAuthenticated, setCompletedOnboarding } = useAuthStore()
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -31,10 +33,14 @@ export default function RegisterPage() {
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       // После успешной регистрации:
-      // 1. Переключаемся на реальный режим данных
+      // 1. Устанавливаем авторизацию
+      const userId = `user-${Date.now()}`
+      setAuthenticated(userId, email)
+      
+      // 2. Переключаемся на реальный режим данных
       switchToRealMode()
       
-      // 2. Разблокируем бонусный модуль
+      // 3. Разблокируем бонусный модуль
       const bonusModules = getBonusModulesOnRegistration()
       if (bonusModules.length > 0) {
         const bonusModule = bonusModules[0] // Берём первый бонусный модуль
@@ -44,7 +50,10 @@ export default function RegisterPage() {
         alert(`🎁 Поздравляем! Вам разблокирован модуль: ${bonusModule.name}`)
       }
       
-      // 3. Перенаправляем на дашборд
+      // 4. Завершаем онбординг
+      setCompletedOnboarding(true)
+      
+      // 5. Перенаправляем на дашборд
       router.push('/dashboard')
       
     } catch (err) {
