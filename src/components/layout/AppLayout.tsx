@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import MobileSettingsPanel from '@/components/mobile/MobileSettingsPanel'
 import { useDashboardStore } from '@/stores/dashboard-store'
+import { useAuthStore } from '@/stores/auth-store'
 
 const navigation = [
   { id: 'dashboard', name: 'Дашборд', icon: '📊', href: '/dashboard' },
@@ -35,6 +36,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const firstNavItemRef = useRef<HTMLAnchorElement>(null)
 
   const { dataMode } = useDashboardStore()
+  const { isAuthenticated, hasCompletedOnboarding } = useAuthStore()
+
+  // Синхронизация dataMode с auth state
+  useEffect(() => {
+    const shouldUseDemo = !isAuthenticated || !hasCompletedOnboarding
+    const currentMode = shouldUseDemo ? 'demo' : 'real'
+    
+    // Обновляем dataMode только если он отличается
+    const dashboardStore = useDashboardStore.getState()
+    if (dashboardStore.dataMode !== currentMode) {
+      dashboardStore.setDataMode(currentMode)
+    }
+  }, [isAuthenticated, hasCompletedOnboarding])
 
   // Проверка мобильного устройства и управление состоянием сайдбара
   useEffect(() => {
