@@ -6,6 +6,7 @@ import { contextEngine } from '@/core/context/context-engine'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import MobileSettingsPanel from '@/components/mobile/MobileSettingsPanel'
+import { useDashboardStore } from '@/stores/dashboard-store'
 
 const navigation = [
   { id: 'dashboard', name: 'Дашборд', icon: '📊', href: '/dashboard' },
@@ -30,7 +31,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [swipeStartX, setSwipeStartX] = useState<number | null>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+  const hamburgerButtonRef = useRef<HTMLButtonElement>(null)
+  const firstNavItemRef = useRef<HTMLAnchorElement>(null)
 
+  const { dataMode } = useDashboardStore()
+
+  // Проверка мобильного устройства и управление состоянием сайдбара
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -45,6 +51,36 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // Обработка клавиши Esc для закрытия сайдбара
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobile && sidebarOpen) {
+        setSidebarOpen(false)
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isMobile, sidebarOpen])
+
+  // Фокус на первый элемент меню при открытии сайдбара
+  useEffect(() => {
+    if (sidebarOpen && isMobile) {
+      // Блокируем скролл фона
+      document.body.style.overflow = 'hidden'
+      
+      // Переносим фокус на первый элемент меню через небольшой задержку
+      const timer = setTimeout(() => {
+        firstNavItemRef.current?.focus()
+      }, 100)
+      
+      return () => {
+        document.body.style.overflow = ''
+        clearTimeout(timer)
+      }
+    }
+  }, [sidebarOpen, isMobile])
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (isMobile) {
@@ -128,6 +164,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             style={{ minHeight: '44px', minWidth: '44px' }}
+            aria-label={sidebarOpen ? 'Свернуть меню' : 'Развернуть меню'}
           >
             {sidebarOpen ? '◀' : '▶'}
           </button>
@@ -149,12 +186,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Navigation - Modern with Icons */}
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-          {visibleModules.map((item) => (
+          {visibleModules.map((item, index) => (
             <Link
               key={item.id}
               href={item.href}
               onClick={handleNavClick}
-              className={`nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group`}
+              ref={index === 0 ? firstNavItemRef : null}
+              tabIndex={sidebarOpen ? 0 : -1}
+              className={`nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-purple-500`}
               style={{
                 minHeight: '44px',
                 backgroundColor: isActive(item.href) 
@@ -200,15 +239,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         )}
       </aside>
 
-      {/* Mobile Sidebar Overlay - Modern */}
+      {/* Mobile Sidebar Overlay - Modern с анимацией */}
       {isMobile && (
         <div 
           className={`mobile-sidebar-overlay ${sidebarOpen ? 'open' : ''}`}
           onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
         >
           <div 
             className="mobile-sidebar"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Меню навигации"
           >
             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200/50 dark:border-gray-700/50">
               <div className="flex items-center gap-3">
@@ -221,10 +264,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="p-2"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 style={{ minHeight: '44px', minWidth: '44px' }}
+                aria-label="Закрыть меню"
               >
-                ✕
+                <span className="text-2xl">✕</span>
               </button>
             </div>
 
@@ -242,12 +286,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-              {visibleModules.map((item) => (
+              {visibleModules.map((item, index) => (
                 <Link
                   key={item.id}
                   href={item.href}
                   onClick={handleNavClick}
-                  className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all`}
+                  ref={index === 0 ? firstNavItemRef : null}
+                  className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-purple-500`}
                   style={{
                     minHeight: '44px',
                     backgroundColor: isActive(item.href) 
@@ -281,9 +326,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-4">
             {isMobile && (
               <button
+                ref={hamburgerButtonRef}
                 onClick={() => setSidebarOpen(true)}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 style={{ minHeight: '44px', minWidth: '44px' }}
+                aria-label="Открыть меню"
+                aria-expanded={sidebarOpen}
+                aria-controls="mobile-sidebar"
               >
                 <span className="text-2xl">☰</span>
               </button>
@@ -292,6 +341,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 {contextConfig?.name}
               </h1>
+              {/* Демо-режим бейдж */}
+              {dataMode === 'demo' && (
+                <span className="inline-flex items-center gap-1 ml-2 px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 text-xs rounded-full">
+                  🟡 Демо
+                </span>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
@@ -305,6 +360,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 onClick={() => setSettingsOpen(true)}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 style={{ minHeight: '44px', minWidth: '44px' }}
+                aria-label="Настройки"
               >
                 <span className="text-xl">⚙️</span>
               </button>

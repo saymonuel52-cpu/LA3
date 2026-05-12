@@ -1,15 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import ProtectedLayout from '@/components/layout/ProtectedLayout'
 import ThemeToggle from '@/components/settings/ThemeToggle'
 import BackupSettings from '@/components/settings/BackupSettings'
 import DataSettings from '@/components/settings/DataSettings'
-import { DataMode } from '@/hooks/useDashboardData'
 
 export default function SettingsPage() {
-  const [dataMode, setDataMode] = useState<DataMode>('demo')
-
   return (
     <ProtectedLayout>
       <div className="space-y-6">
@@ -19,7 +15,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Data Settings */}
-        <DataSettings currentMode={dataMode} onModeChange={setDataMode} />
+        <DataSettings />
 
         {/* Theme Settings */}
         <div className="card">

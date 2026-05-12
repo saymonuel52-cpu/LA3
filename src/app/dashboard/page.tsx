@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import ProtectedLayout from '@/components/layout/ProtectedLayout'
 import { useApp } from '@/providers/app-provider'
 import { useDashboardData } from '@/hooks/useDashboardData'
@@ -19,8 +18,7 @@ const modules = [
 
 function DashboardContent() {
   const { currentContext } = useApp()
-  const [dataMode, setDataMode] = useState<'demo' | 'real' | 'empty'>('demo')
-  const { stats, recentActivity, modules: moduleConfig, contexts, isLoading } = useDashboardData(dataMode)
+  const { stats, recentActivity, modules: moduleConfig, contexts, isLoading, mode } = useDashboardData()
   
   const contextConfig = {
     home: { name: 'Дом', visibleModules: ['dashboard', 'tasks', 'calendar', 'finance', 'notes', 'health'] },
@@ -51,24 +49,20 @@ function DashboardContent() {
         </p>
       </div>
 
-      {/* Mode Selector */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {(['demo', 'real', 'empty'] as const).map((mode) => (
-          <button
-            key={mode}
-            onClick={() => setDataMode(mode)}
-            className={`px-4 py-2 rounded-lg border transition-colors ${
-              dataMode === mode
-                ? 'bg-blue-500 text-white border-blue-500'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-            }`}
-          >
-            {mode === 'demo' && 'Демо-данные'}
-            {mode === 'real' && 'Реальные данные'}
-            {mode === 'empty' && 'Пустой режим'}
-          </button>
-        ))}
-      </div>
+      {/* Демо-режим бейдж */}
+      {mode === 'demo' && (
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🟡</span>
+            <div>
+              <p className="font-medium text-yellow-800 dark:text-yellow-200">Демо-режим</p>
+              <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                Демо-данные показываются только до регистрации. После авторизации вы увидите свои реальные данные.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -85,7 +79,7 @@ function DashboardContent() {
         
         {stats.length === 0 && (
           <div className="col-span-full text-center py-8 text-gray-500">
-            Нет данных для отображения. Переключитесь в режим демо или добавьте реальные данные.
+            Нет данных для отображения. Добавьте свои первые задачи, события или транзакции.
           </div>
         )}
       </div>

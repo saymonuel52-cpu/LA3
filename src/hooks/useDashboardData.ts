@@ -7,8 +7,9 @@ import calendarDemo from '@/data/demo/calendar.json'
 import financeDemo from '@/data/demo/finance.json'
 import { db } from '@/lib/db/database'
 import { Task, CalendarEvent, Transaction } from '@/lib/db/schema'
+import { useDashboardStore } from '@/stores/dashboard-store'
 
-export type DataMode = 'demo' | 'real' | 'empty'
+export type DataMode = 'demo' | 'real'
 
 export interface DashboardStats {
   id: string
@@ -42,12 +43,14 @@ export interface DashboardData {
 }
 
 /**
- * Хук для управления данными дашборда с поддержкой трёх режимов:
- * - demo: демо-данные из JSON файлов
- * - real: реальные данные из IndexedDB (фильтр по isDemo: false)
- * - empty: пустые данные для начального состояния
+ * Хук для управления данными дашборда.
+ * 
+ * Логика демо-режима:
+ * - Демо-данные показываются ТОЛЬКО если пользователь не авторизован ИЛИ не прошел онбординг
+ * - После регистрации/онбординга автоматически переключается на реальные данные
+ * - В настройках нет переключателя режимов — только кнопка сброса данных
  */
-export function useDashboardData(mode: DataMode = 'demo'): DashboardData {
+export function useDashboardData(): DashboardData {
   const [data, setData] = useState<DashboardData>({
     stats: [],
     recentActivity: [],
@@ -57,102 +60,97 @@ export function useDashboardData(mode: DataMode = 'demo'): DashboardData {
     events: [],
     transactions: [],
     isLoading: true,
-    mode
+    mode: 'real'
   })
+
+  const { dataMode, setDataMode } = useDashboardStore()
 
   useEffect(() => {
     const loadData = async () => {
       setData(prev => ({ ...prev, isLoading: true }))
 
       try {
-        switch (mode) {
-          case 'demo':
-            // Преобразуем демо-данные в полные типы схемы
-            const demoTasks: Task[] = tasksDemo.tasks.map(task => ({
-              ...task,
-              user_id: 'demo-user',
-              workspace_id: 'demo-workspace',
-              sync_version: 1,
-              status: task.status as 'todo' | 'in_progress' | 'done' | 'archived',
-              priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }))
-            
-            const demoEvents: CalendarEvent[] = calendarDemo.events.map(event => ({
-              ...event,
-              user_id: 'demo-user',
-              workspace_id: 'demo-workspace',
-              reminders: [],
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              sync_version: 1,
-            }))
-            
-            const demoTransactions: Transaction[] = financeDemo.transactions.map(transaction => ({
-              ...transaction,
-              user_id: 'demo-user',
-              workspace_id: 'demo-workspace',
-              account_id: 'demo-account',
-              ai_categorized: false,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              sync_version: 1,
-            }))
-            
-            setData({
-              stats: dashboardDemo.stats,
-              recentActivity: dashboardDemo.recentActivity,
-              modules: dashboardDemo.modules,
-              contexts: dashboardDemo.contexts,
-              tasks: demoTasks,
-              events: demoEvents,
-              transactions: demoTransactions,
-              isLoading: false,
-              mode
-            })
-            break
+        // Проверяем авторизацию и онбординг
+        // В реальной реализации здесь будет проверка из auth store
+        const isAuthenticated = false // TODO: Получить из auth store
+        const hasCompletedOnboarding = false // TODO: Получить из auth store
 
-          case 'real':
-            // Получаем реальные данные (не демо) через фильтрацию в памяти
-            const allTasks = await db.tasks.toArray()
-            const allEvents = await db.calendarEvents.toArray()
-            const allTransactions = await db.transactions.toArray()
-            
-            const realTasks = allTasks.filter(task => task.isDemo === false)
-            const realEvents = allEvents.filter(event => event.isDemo === false)
-            const realTransactions = allTransactions.filter(transaction => transaction.isDemo === false)
-            
-            // Генерируем статистику на основе реальных данных
-            const stats = generateStatsFromRealData(realTasks, realEvents, realTransactions)
-            const recentActivity = generateRecentActivity(realTasks, realEvents, realTransactions)
-            
-            setData({
-              stats,
-              recentActivity,
-              modules: dashboardDemo.modules, // модули одинаковые
-              contexts: dashboardDemo.contexts,
-              tasks: realTasks,
-              events: realEvents,
-              transactions: realTransactions,
-              isLoading: false,
-              mode
-            })
-            break
+        // Если пользователь не авторизован ИЛИ не прошел онбординг — используем демо
+        const shouldUseDemo = !isAuthenticated || !hasCompletedOnboarding
 
-          case 'empty':
-            setData({
-              stats: [],
-              recentActivity: [],
-              modules: dashboardDemo.modules,
-              contexts: dashboardDemo.contexts,
-              tasks: [],
-              events: [],
-              transactions: [],
-              isLoading: false,
-              mode
-            })
-            break
+        if (shouldUseDemo) {
+          // Устанавливаем демо-режим
+          setDataMode('demo')
+
+          // Преобразуем демо-данные в полные типы схемы
+          const demoTasks: Task[] = tasksDemo.tasks.map(task => ({
+            ...task,
+            user_id: 'demo-user',
+            workspace_id: 'demo-workspace',
+            sync_version: 1,
+            status: task.status as 'todo' | 'in_progress' | 'done' | 'archived',
+            priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }))
+          
+          const demoEvents: CalendarEvent[] = calendarDemo.events.map(event => ({
+            ...event,
+            user_id: 'demo-user',
+            workspace_id: 'demo-workspace',
+            reminders: [],
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            sync_version: 1,
+          }))
+          
+          const demoTransactions: Transaction[] = financeDemo.transactions.map(transaction => ({
+            ...transaction,
+            user_id: 'demo-user',
+            workspace_id: 'demo-workspace',
+            account_id: 'demo-account',
+            ai_categorized: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            sync_version: 1,
+          }))
+          
+          setData({
+            stats: dashboardDemo.stats,
+            recentActivity: dashboardDemo.recentActivity,
+            modules: dashboardDemo.modules,
+            contexts: dashboardDemo.contexts,
+            tasks: demoTasks,
+            events: demoEvents,
+            transactions: demoTransactions,
+            isLoading: false,
+            mode: 'demo'
+          })
+        } else {
+          // Получаем реальные данные из БД
+          const allTasks = await db.tasks.toArray()
+          const allEvents = await db.calendarEvents.toArray()
+          const allTransactions = await db.transactions.toArray()
+          
+          const realTasks = allTasks.filter(task => task.isDemo !== true)
+          const realEvents = allEvents.filter(event => event.isDemo !== true)
+          const realTransactions = allTransactions.filter(transaction => transaction.isDemo !== true)
+          
+          // Генерируем статистику на основе реальных данных
+          const stats = generateStatsFromRealData(realTasks, realEvents, realTransactions)
+          const recentActivity = generateRecentActivity(realTasks, realEvents, realTransactions)
+          
+          setData({
+            stats,
+            recentActivity,
+            modules: dashboardDemo.modules,
+            contexts: dashboardDemo.contexts,
+            tasks: realTasks,
+            events: realEvents,
+            transactions: realTransactions,
+            isLoading: false,
+            mode: 'real'
+          })
         }
       } catch (error) {
         console.error('Ошибка загрузки данных дашборда:', error)
@@ -204,7 +202,7 @@ export function useDashboardData(mode: DataMode = 'demo'): DashboardData {
     }
 
     loadData()
-  }, [mode])
+  }, [])
 
   return data
 }
@@ -218,7 +216,7 @@ function generateStatsFromRealData(
   transactions: Transaction[]
 ): DashboardStats[] {
   const today = new Date().toISOString().split('T')[0]
-  
+
   const activeTasks = tasks.filter(t => t.status === 'todo' || t.status === 'in_progress').length
   const todayEvents = events.filter(e => e.start_time.startsWith(today)).length
   
@@ -372,3 +370,4 @@ function pluralize(number: number, one: string, two: string, five: string): stri
   }
   return five
 }
+
