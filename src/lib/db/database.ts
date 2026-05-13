@@ -22,6 +22,7 @@ import type {
   AIPromptTemplate,
   SyncMetadata,
   TimelineEntity,
+  SyncQueueItem,
 } from './schema';
 
 export class LADDatabase extends Dexie {
@@ -54,6 +55,9 @@ export class LADDatabase extends Dexie {
   // Timeline Engine — Time-Centric Core
   timelineEntities!: Table<TimelineEntity, string>;
 
+  // Sync Queue
+  syncQueue!: Table<SyncQueueItem, number>;
+  
   constructor() {
     super('LAD2Database');
     
@@ -99,6 +103,13 @@ export class LADDatabase extends Dexie {
     }).upgrade((tx) => {
       // Migration: можно перенести данные из calendar_events и tasks в timeline_entities
       // Для MVP пока оставляем пустым
+    });
+    
+    // Sync Queue — Очередь офлайн-изменений
+    this.version(4).stores({
+      syncQueue: '++id, entityType, entityId, timestamp, synced',
+    }).upgrade((tx) => {
+      // Migration для очереди синхронизации
     });
   }
     

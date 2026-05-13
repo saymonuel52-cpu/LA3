@@ -279,6 +279,19 @@ export interface TimelineEntity {
   metadata?: Record<string, any>;
 }
 
+// Sync Queue — Очередь офлайн-изменений
+export interface SyncQueueItem {
+  id?: number;
+  entityType: string;
+  entityId: string;
+  operation: 'create' | 'update' | 'delete';
+  data: Record<string, any>;
+  timestamp: number;
+  attempts: number;
+  lastError?: string;
+  synced: boolean;
+}
+
 // Dexie.js schema definition
 export const dexieSchema = {
   // Core tables

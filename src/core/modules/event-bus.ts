@@ -7,16 +7,19 @@
  * - Асинхронное выполнение с обработкой ошибок
  */
 
-import { ModuleEvent, EventBus, EventListener } from './types';
+import { ModuleEvent } from './types';
+import { SyncEvent } from '../sync/types';
 
-class TypedEventBus implements EventBus {
-  private listeners: Map<ModuleEvent['type'], Set<EventListener>> = new Map();
+type AnyEvent = ModuleEvent | SyncEvent;
+
+class TypedEventBus {
+  private listeners: Map<AnyEvent['type'], Set<(event: AnyEvent) => void | Promise<void>>> = new Map();
 
   /**
    * Подписаться на событие
    * @returns Функция для отписки
    */
-  subscribe(eventType: ModuleEvent['type'], listener: EventListener): () => void {
+  subscribe(eventType: AnyEvent['type'], listener: (event: AnyEvent) => void | Promise<void>): () => void {
     if (!this.listeners.has(eventType)) {
       this.listeners.set(eventType, new Set());
     }
@@ -36,7 +39,7 @@ class TypedEventBus implements EventBus {
   /**
    * Опубликовать событие
    */
-  publish(event: ModuleEvent): void {
+  publish(event: AnyEvent): void {
     const listeners = this.listeners.get(event.type);
     if (!listeners) return;
     
@@ -70,7 +73,7 @@ class TypedEventBus implements EventBus {
   /**
    * Получить количество слушателей (для отладки)
    */
-  getListenerCount(eventType?: ModuleEvent['type']): number {
+  getListenerCount(eventType?: AnyEvent['type']): number {
     if (eventType) {
       return this.listeners.get(eventType)?.size || 0;
     }
@@ -79,7 +82,7 @@ class TypedEventBus implements EventBus {
 }
 
 // Singleton instance
-export const eventBus: EventBus = new TypedEventBus();
+export const eventBus: TypedEventBus = new TypedEventBus();
 
 // Dev-only: глобальный доступ для отладки
 if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
