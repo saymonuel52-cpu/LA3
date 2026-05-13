@@ -254,6 +254,31 @@ export interface SyncMetadata {
   sync_status: 'pending' | 'synced' | 'conflict' | 'error';
 }
 
+// Timeline Engine — Time-Centric Core
+export interface TimelineEntity {
+  id: string;
+  type: 'task' | 'event' | 'appointment' | 'payment' | 'health_entry' | 'note' | 'crm_activity' | 'custom';
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime?: string;
+  duration?: number;
+  recurrence?: any; // RecurrenceRule
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'archived';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  tags: string[];
+  linkedEntities: Record<string, string | undefined>;
+  timezone: string;
+  color?: string;
+  icon?: string;
+  createdAt: string;
+  updatedAt: string;
+  syncedAt: string | null | undefined;
+  isDeleted?: boolean;
+  isDemo?: boolean;
+  metadata?: Record<string, any>;
+}
+
 // Dexie.js schema definition
 export const dexieSchema = {
   // Core tables
@@ -281,6 +306,9 @@ export const dexieSchema = {
   
   // Sync tables
   sync_metadata: 'id, user_id, entity_type, entity_id, sync_status',
+  
+  // Timeline Engine — Time-Centric Core
+  timeline_entities: 'id, startTime, endTime, [startTime+endTime], type, status',
 };
 
 // Supabase SQL schema (for reference)

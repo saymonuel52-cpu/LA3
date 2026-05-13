@@ -21,6 +21,7 @@ import type {
   AIActionLog,
   AIPromptTemplate,
   SyncMetadata,
+  TimelineEntity,
 } from './schema';
 
 export class LADDatabase extends Dexie {
@@ -49,6 +50,9 @@ export class LADDatabase extends Dexie {
   
   // Sync tables
   syncMetadata!: Table<SyncMetadata, string>;
+
+  // Timeline Engine — Time-Centric Core
+  timelineEntities!: Table<TimelineEntity, string>;
 
   constructor() {
     super('LAD2Database');
@@ -87,6 +91,14 @@ export class LADDatabase extends Dexie {
       calendarEvents: 'id, user_id, workspace_id, start_time, end_time, [user_id+start_time], [user_id+workspace_id]',
     }).upgrade((tx) => {
       // Migration logic if needed
+    });
+    
+    // Timeline Engine — Time-Centric Core
+    this.version(3).stores({
+      timelineEntities: 'id, startTime, endTime, [startTime+endTime], type, status, isDeleted',
+    }).upgrade((tx) => {
+      // Migration: можно перенести данные из calendar_events и tasks в timeline_entities
+      // Для MVP пока оставляем пустым
     });
   }
   
