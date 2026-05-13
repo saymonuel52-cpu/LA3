@@ -204,6 +204,29 @@ export interface TimelineFilters {
   linkedModule?: string  // Фильтр по модулю (например, 'finance')
   searchQuery?: string   // Поиск по title/description
   includeDeleted?: boolean
+  startTime?: Date       // Фильтр по началу диапазона
+  endTime?: Date         // Фильтр по концу диапазона
+}
+
+// ============================================================================
+// CREATE ENTITY DATA (Данные для создания)
+// ============================================================================
+
+export interface CreateEntityData {
+  type: EntityType
+  title: string
+  description?: string
+  startTime: Date
+  endTime?: Date
+  duration?: number
+  status?: EntityStatus
+  priority?: EntityPriority
+  tags?: string[]
+  linkedEntities?: LinkedEntities
+  color?: string
+  icon?: string
+  metadata?: Record<string, any>
+  contextId?: 'home' | 'work' | 'study'
 }
 
 // ============================================================================

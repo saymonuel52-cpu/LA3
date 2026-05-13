@@ -21,13 +21,13 @@ export default function DataSettings() {
       
       // Удаляем каждую запись по отдельности
       for (const task of demoTasks) {
-        await db.tasks.delete(task.id)
+        if (task.id) await db.tasks.delete(String(task.id))
       }
       for (const event of demoEvents) {
-        await db.calendarEvents.delete(event.id)
+        if (event.id) await db.calendarEvents.delete(String(event.id))
       }
       for (const transaction of demoTransactions) {
-        await db.transactions.delete(transaction.id)
+        if (transaction.id) await db.transactions.delete(String(transaction.id))
       }
 
       setClearStatus({

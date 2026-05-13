@@ -65,21 +65,21 @@ export interface Workspace {
 
 // Module-specific tables (examples)
 export interface Task {
-  id: string;
+  id?: number;
   user_id: string;
   workspace_id: string;
   title: string;
   description?: string;
-  status: 'todo' | 'in_progress' | 'done' | 'archived';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
   due_date?: string;
-  completed_at?: string;
+  status: 'todo' | 'in-progress' | 'completed' | 'archived';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   tags: string[];
-  assigned_to?: string; // user_id for collaboration
+  context: 'home' | 'work' | 'study';
   created_at: string;
   updated_at: string;
-  sync_version: number; // For CRDT conflict resolution
-  isDemo: boolean; // Маркер демо-данных
+  deleted_at?: string;
+  completed_at?: string;
+  isDemo?: boolean;
 }
 
 export interface CalendarEvent {

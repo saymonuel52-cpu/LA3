@@ -104,16 +104,18 @@ export function useDashboardData(): DashboardData {
           setDataMode('demo')
 
           // Преобразуем демо-данные в полные типы схемы
-          const demoTasks: Task[] = tasksDemo.tasks.map(task => ({
+          const demoTasks: Task[] = tasksDemo.tasks.map((task, index) => ({
             ...task,
+            id: index + 1,
             user_id: 'demo-user',
             workspace_id: 'demo-workspace',
+            context: 'work',
             sync_version: 1,
             status: task.status as 'todo' | 'in_progress' | 'done' | 'archived',
             priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-          }))
+          })) as Task[];
           
           const demoEvents: CalendarEvent[] = calendarDemo.events.map(event => ({
             ...event,
@@ -176,16 +178,18 @@ export function useDashboardData(): DashboardData {
       } catch (error) {
         console.error('Ошибка загрузки данных дашборда:', error)
         // В случае ошибки возвращаем преобразованные демо-данные как fallback
-        const fallbackTasks: Task[] = tasksDemo.tasks.map(task => ({
+        const fallbackTasks: Task[] = tasksDemo.tasks.map((task, index) => ({
           ...task,
+          id: index + 1,
           user_id: 'demo-user',
           workspace_id: 'demo-workspace',
+          context: 'work',
           sync_version: 1,
           status: task.status as 'todo' | 'in_progress' | 'done' | 'archived',
           priority: task.priority as 'low' | 'medium' | 'high' | 'urgent',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        }))
+        })) as Task[];
         
         const fallbackEvents: CalendarEvent[] = calendarDemo.events.map(event => ({
           ...event,
@@ -238,14 +242,14 @@ function generateStatsFromRealData(
 ): DashboardStats[] {
   const today = new Date().toISOString().split('T')[0]
 
-  const activeTasks = tasks.filter(t => t.status === 'todo' || t.status === 'in_progress').length
+  const activeTasks = tasks.filter(t => t.status === 'todo' || t.status === 'in-progress').length
   const todayEvents = events.filter(e => e.start_time.startsWith(today)).length
   
   const monthlyExpenses = transactions
     .filter(t => !t.is_income)
     .reduce((sum, t) => sum + t.amount, 0)
   
-  const completedTasks = tasks.filter(t => t.status === 'done').length
+  const completedTasks = tasks.filter(t => t.status === 'completed').length
   const totalTasks = tasks.length
   const productivity = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
@@ -297,7 +301,7 @@ function generateRecentActivity(
   
   // Добавляем последние выполненные задачи
   const recentTasks = tasks
-    .filter(t => t.status === 'done')
+    .filter(t => t.status === 'completed')
     .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
     .slice(0, 2)
   

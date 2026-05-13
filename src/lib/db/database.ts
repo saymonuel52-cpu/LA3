@@ -101,7 +101,7 @@ export class LADDatabase extends Dexie {
       // Для MVP пока оставляем пустым
     });
   }
-  
+    
   // Helper methods for common operations
   
   async getUserSettings(userId: string, context?: string): Promise<Settings[]> {
